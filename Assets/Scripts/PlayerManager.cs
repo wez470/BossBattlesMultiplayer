@@ -15,7 +15,7 @@ public class PlayerManager : MonoBehaviour {
     }
     
     private void SetupPlayers() {
-        for(int i = 1; i <= numPlayers; i++) {
+        for (int i = 1; i <= numPlayers; i++) {
             CreatePlayer(i);
         }
     }

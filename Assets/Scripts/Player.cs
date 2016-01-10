@@ -14,6 +14,7 @@ public class Player : NetworkBehaviour {
     private int playerNum = 1;
     [SyncVar]
     private Quaternion rotation;
+    private bool alive = true;
 	
 	public void SetPlayerNum(int playerNum) {
 		this.playerNum = playerNum;    
@@ -26,11 +27,11 @@ public class Player : NetworkBehaviour {
     }
 
 	void Update() {
-        if(isLocalPlayer) {
+        if (isLocalPlayer && alive) {
             setRotation();
             setMovement();
 
-            if(XCI.GetButtonDown(XboxButton.A) && ArrowCount > 0) {
+            if (XCI.GetButtonDown(XboxButton.A) && ArrowCount > 0) {
                 CmdShoot(transform.position);
             }
         }
@@ -51,12 +52,12 @@ public class Player : NetworkBehaviour {
 		float angle = Mathf.Atan2(-rotY, rotX) * Mathf.Rad2Deg - 90f;
         Quaternion prevRot = transform.rotation;
 		
-		if(Mathf.Abs(rotX) > ROT_DEAD_ZONE || Mathf.Abs(rotY) > ROT_DEAD_ZONE) {
+		if (Mathf.Abs(rotX) > ROT_DEAD_ZONE || Mathf.Abs(rotY) > ROT_DEAD_ZONE) {
 			transform.rotation = Quaternion.Euler(0, 0, angle);
 			GetComponent<Rigidbody2D>().angularVelocity = 0;
 		}
 
-        if(!prevRot.Equals(transform.rotation)) {
+        if (!prevRot.Equals(transform.rotation)) {
             CmdUpdateRotation(transform.rotation);
         }
 	}
@@ -94,6 +95,12 @@ public class Player : NetworkBehaviour {
 
     [ClientRpc]
     private void RpcDie() {
-        transform.position = Vector3.zero;
+        alive = false;
+        GetComponent<Collider2D>().enabled = false;
+        GetComponent<SpriteRenderer>().enabled = false;
+    }
+
+    public bool isAlive() {
+        return alive;
     }
 }

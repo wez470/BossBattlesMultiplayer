@@ -21,7 +21,7 @@ public class Arrow : NetworkBehaviour {
     }
 
     void OnBecameInvisible() {
-        if(owner != null && !Collided) {
+        if (owner != null && !Collided) {
             owner.GetComponent<Player>().IncreaseArrowCount();
         }
         Destroy(gameObject);
@@ -31,6 +31,7 @@ public class Arrow : NetworkBehaviour {
         if (isServer) {
             GetComponent<Rigidbody2D>().velocity = Vector2.zero;
             Collided = true;
+            GetComponent<Rigidbody2D>().drag = 10;
 
             if (col.collider.gameObject.tag == "WeakSpot") {
                 Destroy(col.gameObject);
